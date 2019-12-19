@@ -1,9 +1,3 @@
-/* body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  color: #a00605;
-  background-color: #fff;
-} */
 .columnname {
   font-size: 14px;
   color: #a00605;
@@ -49,7 +43,7 @@
   padding: 20px;
   border: 1px solid #888;
   width: 60%;
-  height: 55%;
+  height: 58%;
 }
 
 /* The Close Button */
