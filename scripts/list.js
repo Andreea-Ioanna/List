@@ -1,8 +1,77 @@
 const userList = [];
 
-$(document).ready(function() {
-  list();
+function deleteuser(id) {
+  var settings2 = {
+    async: true,
+    crossDomain: true,
+    url: "https://userlist-31ec.restdb.io/rest/userlist/" + id,
+    method: "DELETE",
+    headers: {
+      "content-type": "application/json",
+      "x-apikey": "5de26f654658275ac9dc20f4",
+      "cache-control": "no-cache"
+    }
+  };
 
+  $.ajax(settings2).done(function(response2) {
+    location.reload();
+  });
+}
+
+function createUser() {
+  var name = document.getElementById("name").value;
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("password").value;
+  var balance = document.getElementById("balance").value;
+  var balance_loading_day = document.getElementById("balance_loading_day").value;
+  var date_of_birth = document.getElementById("date_of_birth").value;
+  var jsondata = { name: name, email: email, password: password, balance: balance, balance_loading_day: balance_loading_day, date_of_birth: date_of_birth };
+  var settings3 = {
+    async: true,
+    crossDomain: true,
+    url: "https://userlist-31ec.restdb.io/rest/userlist",
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-apikey": "5de26f654658275ac9dc20f4",
+      "cache-control": "no-cache"
+    },
+    processData: false,
+    data: JSON.stringify(jsondata)
+  };
+
+  $.ajax(settings3).done(function(response3) {
+    location.reload();
+  });
+}
+
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+};
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+};
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
+
+$(document).ready(function() {
   var settings = {
     async: true,
     crossDomain: true,
@@ -14,6 +83,7 @@ $(document).ready(function() {
       "cache-control": "no-cache"
     }
   };
+
   $.ajax(settings).done(function(response) {
     let resp = [];
     for (let i in response) {
@@ -21,93 +91,45 @@ $(document).ready(function() {
     }
 
     console.log(resp);
+
     $("#table_id").DataTable({
-      data: resp
+      data: resp,
+      dataSrc: "",
+      mDataProp: "",
+      pageLength: 0,
+      lengthMenu: [10, 25, 50, 100],
+      aoColumns: [
+        { mData: "name" },
+        { mData: "email" },
+        { mData: "password" },
+        { mData: "balance" },
+        {
+          mData: "balance_loading_day",
+          render: function(data) {
+            var date = new Date(data);
+            var month = date.getMonth() + 1;
+            return (month.toString().length > 1 ? month : "0" + month) + "/" + date.getDate() + "/" + date.getFullYear();
+          }
+        },
+        {
+          mData: "date_of_birth",
+          render: function(data) {
+            var date = new Date(data);
+            var month = date.getMonth() + 1;
+            return (month.toString().length > 1 ? month : "0" + month) + "/" + date.getDate() + "/" + date.getFullYear();
+          }
+        },
+        {
+          mData: null,
+          mRender: function(data, type, row, meta) {
+            if (type === "display") {
+              data = "<a class='btn btn-danger' onClick=\"deleteuser('" + data._id + "')\">" + "Delete" + "</a>";
+            }
+
+            return data;
+          }
+        }
+      ]
     });
   });
 });
-
-function arrayLoop() {
-  for (let i in userList) {
-    let container = document.createElement("tr");
-    let name = document.createElement("td");
-    let email = document.createElement("td");
-    let password = document.createElement("td");
-    let balance = document.createElement("td");
-    let balance_loading_day = document.createElement("td");
-    let date_of_birth = document.createElement("td");
-    name.innerHTML = userList[i].getName();
-    email.innerHTML = userList[i].getEmail();
-    password.innerHTML = userList[i].getPassword();
-    balance.innerHTML = userList[i].getBalance();
-    balance_loading_day.innerHTML = userList[i].getBalanceLoadingDay();
-    date_of_birth.innerHTML = userList[i].getDateOfBirth();
-
-    container.appendChild(name);
-    container.appendChild(email);
-    container.appendChild(password);
-    container.appendChild(balance);
-    container.appendChild(balance_loading_day);
-    container.appendChild(date_of_birth);
-    console.log(container);
-    document.getElementById("tbody").appendChild(container);
-  }
-}
-function list() {
-  // let xhr = new XMLHttpRequest();
-  // xhr.onload = function() {
-  // let data = JSON.parse(this.response);
-  // if (xhr.status >= 200 && xhr.status < 400) {
-  //   data.forEach(data => {
-  //     console.log(userList);
-  //     userList.push(data.email);
-  //     //  userList.push(new User(data.email, data.balance, data.name, data.password, data.balance_loading_day, data.date_of_birth));
-  //   });
-  //   //arrayLoop();
-  // } else {
-  //   console.log(xhr.status);
-  // }
-}
-// xhr.open("GET", "https://userlist-31ec.restdb.io/rest/userlist");
-// xhr.setRequestHeader("content-type", "application/json");
-// xhr.setRequestHeader("x-apikey", "5de26f654658275ac9dc20f4");
-// xhr.setRequestHeader("cache-control", "no-cache");
-// xhr.send();
-// }
-
-// function User(Email, Balance, Name, Password, BalanceLoadingDay, DateOfBirth) {
-//   this.email = Email;
-//   this.balance = Balance;
-//   this.name = Name;
-//   this.password = Password;
-//   this.balanceLoadingDay = BalanceLoadingDay;
-//   this.dateOfBirth = DateOfBirth;
-//   this.matchUser = (email, password) => {
-//     return this.email === email && this.password === password;
-//   };
-//   this.matchEmail = email => {
-//     return this.email === email;
-//   };
-//   this.getEmail = () => {
-//     return this.email;
-//   };
-//   this.getBalance = () => {
-//     return this.balance;
-//   };
-//   this.getName = () => {
-//     return this.name;
-//   };
-//   this.getPassword = () => {
-//     return this.password;
-//   };
-//   this.getBalanceLoadingDay = () => {
-//     return this.balanceLoadingDay;
-//   };
-//   this.getDateOfBirth = () => {
-//     return this.dateOfBirth;
-//   };
-// }
-
-// const response = await fetch("https://posts-0729.restdb.io/rest/userlist");
-// const myJson = await response.json();
-// console.log(JSON.stringify(myJson));
