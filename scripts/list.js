@@ -1,5 +1,6 @@
 const userList = [];
 
+//DELETE method
 function deleteuser(id) {
   var settings2 = {
     async: true,
@@ -17,7 +18,7 @@ function deleteuser(id) {
     location.reload();
   });
 }
-
+//POST method
 function createUser() {
   var name = document.getElementById("name").value;
   var email = document.getElementById("email").value;
@@ -70,7 +71,7 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 };
-
+//GET method
 $(document).ready(function() {
   var settings = {
     async: true,
@@ -91,7 +92,7 @@ $(document).ready(function() {
     }
 
     console.log(resp);
-
+    //DataTables function
     $("#table_id").DataTable({
       data: resp,
       dataSrc: "",
